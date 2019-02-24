@@ -15,7 +15,7 @@ In order to properly set up the HDFS and Spark frameworks for the given network 
 
 To check that the installation was successful execute on the master node `parallel-ssh -h slaves -P jps` and expect to have a similar output:
 
-`
+```
 follower-1: 7959 DataNode
 follower-1: 8142 Worker
 follower-1: 8453 Jps
@@ -29,7 +29,7 @@ leader: 8710 NameNode
 leader: 8977 SecondaryNameNode
 leader: 9178 Master
 leader: 9534 Jps
-`
+```
 
 ### Spark sorting application
 
