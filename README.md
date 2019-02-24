@@ -1,4 +1,4 @@
-# CS 494 - Cloud Data Centric Systems
+# CS 494 - Cloud Data Center Systems
 
 ## Homework 1
 
@@ -50,7 +50,7 @@ __Execution example:__
 
 - Load the __export__ file into HDFS using the following command `hdfs dfs -put /data/export /data/export.csv`
 - Execute the application using: 
-`spark-2.2.0-bin-hadoop2.7/bin/spark-submit sort_dataframe.py <abs path to input file> <abs path to output file>`
+```spark-2.2.0-bin-hadoop2.7/bin/spark-submit sort_dataframe.py <abs path to input file> <abs path to output file>```
 
 In our case: 
 `spark-2.2.0-bin-hadoop2.7/bin/spark-submit sort_dataframe.py /data/export.csv /data/export_sorted`

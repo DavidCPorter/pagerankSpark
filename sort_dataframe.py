@@ -5,7 +5,7 @@ import sys
 '''
  _______________________________________________________
 |														|
-| CS494 Cloud Data Centric Systems - Homework 1, ex 1	|
+| CS494 Cloud Data Center Systems - Homework 1, ex 1	|
 |_______________________________________________________|
 
 The following program takes as input:
