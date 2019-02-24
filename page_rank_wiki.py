@@ -55,7 +55,7 @@ def computeContribs(ids, rank):
 
 if __name__ == "__main__":
 
-	if len(sys.argv) != 5:
+	if len(sys.argv) <= 5:
 		print("Usage: load_csv_test.py <inputFile> <outputFile> <iterations> <Master IP>")
 		sys.exit(-1)
 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
 	spark = SparkSession.builder\
 	.master("spark://"+ masterIP +":7077")\
-	.appName("homework 1 part 2 - wiki")\
+	.appName("homework 1 part 2 - wiki basic")\
 	.config("spark.submit.deployMode", "cluster")\
 	.config("spark.eventLog.enabled","true") \
 	.config("spark.driver.memory", "32g")\

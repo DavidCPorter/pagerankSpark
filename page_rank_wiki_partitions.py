@@ -57,7 +57,7 @@ def computeContribs(ids, rank):
 if __name__ == "__main__":
 
 	if len(sys.argv) != 6:
-		print("Usage: load_csv_test.py <inputFile> <outputFile> <iterations> <partitions> <Master IP>")
+		print("Usage: load_csv_test.py <inputFile> <outputFile> <iterations> <Master IP> <partitions>")
 		sys.exit(-1)
 
 
@@ -67,11 +67,11 @@ if __name__ == "__main__":
 	# Executor cores  				= 10
 	# Number of cpus per task  		= 1 
 
-	masterIP = sys.argv[5]
+	masterIP = sys.argv[4]
 
 	spark = SparkSession.builder\
 	.master("spark://"+ masterIP +":7077")\
-	.appName("homework 1 part 2 - wiki")\
+	.appName("homework 1 part 2 - wiki partitions")\
 	.config("spark.submit.deployMode", "cluster")\
 	.config("spark.eventLog.enabled","true") \
 	.config("spark.driver.memory", "32g")\
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 	output_path = "hdfs://10.10.1.1:9000" + sys.argv[2]
 
 	iterations = int (sys.argv[3])
-	partitions = int (sys.argv[4])
+	partitions = int (sys.argv[5])
 
 	# Loads in input file. It should be in format of:
 	#     nodeID         neighbor nodeID

@@ -1,11 +1,14 @@
 #! /bin/bash
 
+EXE=$1											# Path to the executable that should be run
+
 MASTER_IP="$(ifconfig | awk '/inet / {print $2; exit}')"
 INPUT_HDFS='/data/wiki'
 OUTPUT_HDFS='/data/ranks-wiki/'
 INPUT_DATA='../Data/wiki/'
 DATA_LINK='https://www.dropbox.com/sh/9uvvugxuq9ekqeh/AABITMBbNqLux_ZkW9yt2vdJa?dl=0'
 ITERATIONS=10
+PARTITONS=30
 
 if [ ! -d $INPUT_DATA ]; then
     echo "Data not found! Downloading them..."
@@ -27,7 +30,7 @@ hdfs dfs -rm -r $OUTPUT_HDFS
 
 echo 'Starting the application...'
 
-../../spark-2.2.0-bin-hadoop2.7/bin/spark-submit ../page_rank_wiki.py $INPUT_HDFS'/link*' $OUTPUT_HDFS $ITERATIONS $MASTER_IP
+../../spark-2.2.0-bin-hadoop2.7/bin/spark-submit $EXE $INPUT_HDFS'/link*' $OUTPUT_HDFS $ITERATIONS $MASTER_IP $PARTITONS 
 
 echo 'Execution completed!'
 
