@@ -52,16 +52,6 @@ def computeContribs(ids, rank):
 	for id in ids:
 		yield (id, rank / num_ids)
 
-"""
-class DomainPartitioner extends Partitioner {
-	def numPartitions = 20
-
-	def getPartition(key: Any): Int = parseDomain(key.toString).hashCode % numPartitions
-
-	def equals(other: Any): Boolean = other.isInstanceOf[DomainPartitioner]
-}
-"""
-
 if __name__ == "__main__":
 
 	if len(sys.argv) != 4:

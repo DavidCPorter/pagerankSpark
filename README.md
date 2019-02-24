@@ -31,6 +31,8 @@ leader: 9178 Master
 leader: 9534 Jps
 ```
 
+__OBS:__ I order to have an always working environment you effective 
+
 ### Spark sorting application
 
 Simple application that sort an input .csv file from HDFS and saves it back sorted into HDFS. The sparkSession used is the one suggested in the homework description, thus:
@@ -57,4 +59,29 @@ In our case:
 
 
 ### PageRank using Spark 
+
+This application execute the __PageRank__ algorithm on a given input file in HDFS. Also in this case we used the above mentioned set up configuration for the sparkSession. Before running the application the correct IP address of the master node have to be inserted in the code as in the previous example. The output file and the number of iterations should be provided as input parameters by the user. 
+There are more flavors of the same application which try to explore how the performance are affected when making little changes to the code:
+
+- __page_rank.py__  is used to test the algorithm with the __web-StanBerk.txt__ input graph with a standard configuration (no in-memory persistence or custom partitioning).
+
+- __page\_rank\_wiki.py__ is used to test pagerank on the __Wikipedia__ dataset with a standard configuration (no in-memory persistence or custom partitioning).
+
+- __page\_rank\_wiki\_paritioning.py__ is used to test pagerank on the __Wikipedia__ dataset with a custom partitioning but without in-memory persistence.
+
+- __page\_rank\_wiki\_caching.py__ is used to test pagerank on the __Wikipedia__ dataset with a custom partitioning and in-memory persistence.
+
+To run the applications that don't have custom partitioning use the following:
+
+```spark-2.2.0-bin-hadoop2.7/bin/spark-submit <app name> <abs path to input file> <abs path to output file> <num of iterations>```
+
+For example:
+```spark-2.2.0-bin-hadoop2.7/bin/spark-submit page_rank.py /data/web-BerkStan /data/ranks-BerkStan 15```
+
+To run applications with custom partitioning use the following:
+
+```spark-2.2.0-bin-hadoop2.7/bin/spark-submit <app name> <abs path to input file> <abs path to output file> <num of iterations> <num of partitions>```
+
+For example:
+```spark-2.2.0-bin-hadoop2.7/bin/spark-submit page_rank_wiki_partitioning.py /data/wiki/* /data/ranks-wiki 15 30```
 
