@@ -138,6 +138,8 @@ scp $USER@leader:$ABS_PATH'/'$SLAVES_PATH_SPARK $USER@follower-3:$ABS_PATH'/'$SL
 
 echo 'Starting spark...'
 
+mkdir /tmp/spark-events
+
 spark-2.2.0-bin-hadoop2.7/sbin/start-all.sh
 
 exit

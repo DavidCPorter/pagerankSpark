@@ -13,7 +13,8 @@ from operator import add
 The following program takes as input:
 	- Absolute path to graph input file in HDFS (separator = tab)
 	- Absolute path to ranks output file in HDFS 
-	- number of iterations for Page-Rank Algorithm
+	- Number of iterations for Page-Rank Algorithm
+	- Public IP Address of the Spark Master
 
 And do the following:
 	- Set up a Spark Session using the appropriate config values
@@ -71,6 +72,7 @@ if __name__ == "__main__":
 	.master("spark://"+ masterIP +":7077")\
 	.appName("homework 1 part 2 - wiki")\
 	.config("spark.submit.deployMode", "cluster")\
+	.config("spark.eventLog.enabled","true") \
 	.config("spark.driver.memory", "32g")\
 	.config("spark.executor.memory", "32g")\
 	.config("spark.executor.cores", "10")\

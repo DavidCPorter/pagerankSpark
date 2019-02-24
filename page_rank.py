@@ -77,6 +77,7 @@ if __name__ == "__main__":
 	.master("spark://" + master_IP + ":7077")\
 	.appName("homework 1 part 2 - BerkStan")\
 	.config("spark.submit.deployMode", "cluster")\
+	.config("spark.eventLog.enabled","true") \
 	.config("spark.driver.memory", "32g")\
 	.config("spark.executor.memory", "32g")\
 	.config("spark.executor.cores", "10")\
