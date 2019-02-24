@@ -40,7 +40,7 @@ class DomainPartitioner extends Partitioner {
 if __name__ == "__main__":
 
 	if len(sys.argv) != 4:
-		print("Usage: load_csv_test.py <inputFile> <outputFile> <iterations> ")
+		print("run_task3_wiki.sh <masterIP:port> <HDFS inputFile> <HDFS outputFile> <#iterations>")
 		sys.exit(-1)
 
 
