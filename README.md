@@ -67,7 +67,7 @@ There are more flavors of the same application which try to explore how the perf
 
 - __page\_rank\_wiki\_paritioning.py__ is used to test pagerank on the __Wikipedia__ dataset with a custom partitioning but without in-memory persistence.
 
-- __page\_rank\_wiki\_caching.py__ is used to test pagerank on the __Wikipedia__ dataset with a custom partitioning and in-memory persistence.
+- __page\_rank\_wiki\persistence.py__ is used to test pagerank on the __Wikipedia__ dataset with a custom partitioning and in-memory persistence.
 
 To run the applications that doesn't have custom partitioning use the following:
 
@@ -85,3 +85,4 @@ __For example:__
 
 To replicate the required task just run the scripts inside `/Scripts/` the names should be pretty self explanatory for the task of the script. They automatically downloads the data, upload them into HDFS and run the given application.
 
+For the last part of the Homework instead the scripts inside the `/dp/` directory specifically replicate each of tasks required. 

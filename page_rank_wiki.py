@@ -13,7 +13,8 @@ from operator import add
 The following program takes as input:
 	- Absolute path to graph input file in HDFS (separator = tab)
 	- Absolute path to ranks output file in HDFS 
-	- number of iterations for Page-Rank Algorithm
+	- Number of iterations for Page-Rank Algorithm
+	- Public IP Address of the Spark Master
 
 And do the following:
 	- Set up a Spark Session using the appropriate config values
@@ -54,8 +55,8 @@ def computeContribs(ids, rank):
 
 if __name__ == "__main__":
 
-	if len(sys.argv) != 4:
-		print("Usage: load_csv_test.py <inputFile> <outputFile> <iterations> ")
+	if len(sys.argv) != 5:
+		print("Usage: load_csv_test.py <inputFile> <outputFile> <iterations> <Master IP>")
 		sys.exit(-1)
 
 
@@ -65,10 +66,13 @@ if __name__ == "__main__":
 	# Executor cores  				= 10
 	# Number of cpus per task  		= 1 
 
+	masterIP = sys.argv[4]
+
 	spark = SparkSession.builder\
-	.master("spark://128.110.153.141:7077")\
+	.master("spark://"+ masterIP +":7077")\
 	.appName("homework 1 part 2 - wiki")\
 	.config("spark.submit.deployMode", "cluster")\
+	.config("spark.eventLog.enabled","true") \
 	.config("spark.driver.memory", "32g")\
 	.config("spark.executor.memory", "32g")\
 	.config("spark.executor.cores", "10")\
@@ -110,3 +114,6 @@ if __name__ == "__main__":
 
 	# Store data 
 	ranks.saveAsTextFile(output_path);
+
+	#mean = ranks.map(lambda x: x[1]).mean()
+	#print('AVG ranking: ' + str(mean))  		

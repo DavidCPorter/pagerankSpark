@@ -13,13 +13,13 @@ from operator import add
 The following program takes as input:
 	- Absolute path to graph input file in HDFS (separator = tab)
 	- Absolute path to ranks output file in HDFS 
+	- Number of iterations for Page-Rank Algorithm
 	- Number of partitions in Spark
 	- Public IP Address of the Spark Master
-	- number of iterations for Page-Rank Algorithm
 
 And do the following:
 	- Set up a Spark Session using the appropriate config values
-	- Load the graph from HDFS into an RDD (using the input partitions) and initialize the ranks to 1
+	- Load the graph from HDFS into an RDD (using the input partitions and caching) and initialize the ranks to 1
 	- Repeat Page-Rank iteration until done:
 			- Compute the neighbors contribution with d = 0.15
 			- Update the ranks RDD 
@@ -28,7 +28,7 @@ And do the following:
 OBS: The appropriate IP address of the spark master has to be provided!
 	 Also, it is supposed that the HDFS Namenode has private network IP = 10.10.1.1 
 
-EX: spark../bin/spark-submit.sh page_rank_wiki_partitions.py /data/wiki/* /data/ranks_wiki 10 30 128.72.1.1
+EX: spark../bin/spark-submit.sh page_rank_wiki_persistence.py /data/wiki/* /data/ranks_wiki 10 30 128.72.1.1
 '''
 
 
@@ -96,7 +96,7 @@ if __name__ == "__main__":
 	lines = spark.read.text(input_path).rdd.map(lambda r: r[0])
 	
 	# Loads all IDs from input file and initialize their neighbors.
-	links = lines.map(lambda ids: parseNeighborsWiki(ids)).filter(lambda x: x).distinct().groupByKey().partitionBy(partitions)
+	links = lines.map(lambda ids: parseNeighborsWiki(ids)).filter(lambda x: x).distinct().groupByKey().partitionBy(partitions).cache()
 	#links = links_basic.partitionBy(new HashPartitioner(8))
 
 	# Loads all IDs with other ID(s) link to from input file and initialize ranks of them to one.
@@ -111,7 +111,7 @@ if __name__ == "__main__":
 		contribs = links.join(ranks).flatMap( lambda id_ids_rank: computeContribs(id_ids_rank[1][0], id_ids_rank[1][1]))
 
 		# Re-calculates nodeID ranks based on neighbor contributions.
-		ranks = contribs.reduceByKey(add).mapValues(lambda rank: rank * 0.85 + 0.15).partitionBy(partitions)
+		ranks = contribs.reduceByKey(add).mapValues(lambda rank: rank * 0.85 + 0.15).partitionBy(partitions).cache()
 
 
 	# Store data 
