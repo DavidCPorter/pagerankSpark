@@ -118,6 +118,8 @@ export PATH="/users/claudio/hadoop-2.7.6/bin/:/users/claudio/hadoop-2.7.6/sbin/"
 hdfs namenode -format
 yes | start-dfs.sh
 
+hdfs dfs -mkdir /data/
+
 echo 'Downloading spark...'
 
 parallel-ssh -h ./slaves -P wget https://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.7.tgz

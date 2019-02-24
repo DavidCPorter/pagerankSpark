@@ -31,7 +31,7 @@ leader: 9178 Master
 leader: 9534 Jps
 ```
 
-__OBS:__ In order to have an always working environment you have to add the path to `/users/claudio/hadoop-2.7.6/bin/` and to `/users/claudio/hadoop-2.7.6/sbin/ ` in the `$PATH` variable. To permanently do that, update `$PATH` in /etc/environment using `sudo`.
+__OBS:__ In order to have an always working environment you have to add the path to `/users/[username]/hadoop-2.7.6/bin/` and to `/users/[username]/hadoop-2.7.6/sbin/ ` in the `$PATH` variable. To permanently do that, update `$PATH` in /etc/environment using `sudo`.
 
 ### Spark sorting application
 
@@ -42,20 +42,13 @@ Simple application that sort an input .csv file from HDFS and saves it back sort
 - Executor cores = 10
 - Number of CPUs per task = 1 
 
-Before running the application the correct IP of the master node has to be inserted in the code at __line 41__:
-
-	`.master("spark://master_public_IP:7077")\`
-ex: 
-	`.master("spark://128.110.153.141:7077")\`
-
 __Execution example:__
 
 - Load the __export__ file into HDFS using the following command `hdfs dfs -put /data/export /data/export.csv`
 - Execute the application using: 
-```spark-2.2.0-bin-hadoop2.7/bin/spark-submit sort_dataframe.py <abs path to input file> <abs path to output file>```
+```spark-2.2.0-bin-hadoop2.7/bin/spark-submit sort_dataframe.py <abs path to input file> <abs path to output file> <master IP>```
 
-In our case: 
-`spark-2.2.0-bin-hadoop2.7/bin/spark-submit sort_dataframe.py /data/export.csv /data/export_sorted`
+To replicate the required task just execute the script __sort_dataframe.sh__ which automatically downloads the data, load them into HDFS and run the application.
 
 
 ### PageRank using Spark 
@@ -78,15 +71,17 @@ There are more flavors of the same application which try to explore how the perf
 
 To run the applications that doesn't have custom partitioning use the following:
 
-```spark-2.2.0-bin-hadoop2.7/bin/spark-submit <app name> <abs path to input file> <abs path to output file> <num of iterations>```
+```spark-2.2.0-bin-hadoop2.7/bin/spark-submit <app name> <abs path to input file> <abs path to output file> <num of iterations> <master IP>```
 
 __For example:__
-```spark-2.2.0-bin-hadoop2.7/bin/spark-submit page_rank.py /data/web-BerkStan /data/ranks-BerkStan 15```
+```spark-2.2.0-bin-hadoop2.7/bin/spark-submit page_rank.py /data/web-BerkStan /data/ranks-BerkStan 15 128.110.154.121```
 
 To run applications with custom partitioning use the following:
 
-```spark-2.2.0-bin-hadoop2.7/bin/spark-submit <app name> <abs path to input file> <abs path to output file> <num of iterations> <num of partitions>```
+```spark-2.2.0-bin-hadoop2.7/bin/spark-submit <app name> <abs path to input file> <abs path to output file> <num of iterations> <num of partitions> <master IP>```
 
 __For example:__
-```spark-2.2.0-bin-hadoop2.7/bin/spark-submit page_rank_wiki_partitioning.py /data/wiki/* /data/ranks-wiki 15 30```
+```spark-2.2.0-bin-hadoop2.7/bin/spark-submit page_rank_wiki_partitioning.py /data/wiki/* /data/ranks-wiki 15 30 128.110.154.121```
+
+To replicate the required task just run the scripts inside `/Scripts/` the names should be pretty self explanatory for the task of the script. They automatically downloads the data, upload them into HDFS and run the given application.
 

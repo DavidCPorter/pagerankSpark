@@ -7,14 +7,13 @@ from operator import add
 '''
  _______________________________________________________
 |														|
-| CS494 Cloud Data Center Systems - Homework 1, ex 2.1	|
+| CS494 Cloud Data Center Systems - Homework 1, ex 2.2	|
 |_______________________________________________________|
 
 The following program takes as input:
-	- Absolute path to graph input file in HDFS (separator = spaces)
+	- Absolute path to graph input file in HDFS (separator = tab)
 	- Absolute path to ranks output file in HDFS 
 	- number of iterations for Page-Rank Algorithm
-	- Public IP Address of the Spark Master node
 
 And do the following:
 	- Set up a Spark Session using the appropriate config values
@@ -27,13 +26,9 @@ And do the following:
 OBS: The appropriate IP address of the spark master has to be provided!
 	 Also, it is supposed that the HDFS Namenode has private network IP = 10.10.1.1 
 
-EX: spark../bin/spark-submit.sh page_rank.py /data/web-BerkStan /data/ranks_BerkStan
+EX: spark../bin/spark-submit.sh page_rank.py /data/wiki/* /data/ranks_wiki
 '''
 
-def parseNeighbors(ids):
-	"""Parses a nodeID pair string into nodeID pair."""
-	parts = re.split(r'\s+', ids)
-	return parts[0], parts[1]
 
 def parseNeighborsWiki(ids):
 	"""Parses a nodeID pair string into nodeID pair 
@@ -57,11 +52,10 @@ def computeContribs(ids, rank):
 	for id in ids:
 		yield (id, rank / num_ids)
 
-
 if __name__ == "__main__":
 
 	if len(sys.argv) != 5:
-		print("Usage: load_csv_test.py <inputFile> <outputFile> <iterations> <master IP>")
+		print("Usage: load_csv_test.py <inputFile> <outputFile> <iterations> <partitions>")
 		sys.exit(-1)
 
 
@@ -71,11 +65,9 @@ if __name__ == "__main__":
 	# Executor cores  				= 10
 	# Number of cpus per task  		= 1 
 
-	master_IP = sys.argv[4]
-
 	spark = SparkSession.builder\
-	.master("spark://" + master_IP + ":7077")\
-	.appName("homework 1 part 2 - BerkStan")\
+	.master("spark://128.110.153.141:7077")\
+	.appName("homework 1 part 2 - wiki")\
 	.config("spark.submit.deployMode", "cluster")\
 	.config("spark.driver.memory", "32g")\
 	.config("spark.executor.memory", "32g")\
@@ -91,6 +83,8 @@ if __name__ == "__main__":
 
 	iterations = int (sys.argv[3])
 
+	partitions = int (sys.argv[4])
+
 	# Loads in input file. It should be in format of:
 	#     nodeID         neighbor nodeID
 	#     nodeID         neighbor nodeID
@@ -98,10 +92,11 @@ if __name__ == "__main__":
 	lines = spark.read.text(input_path).rdd.map(lambda r: r[0])
 	
 	# Loads all IDs from input file and initialize their neighbors.
-	links = lines.map(lambda ids: parseNeighbors(ids)).distinct().groupByKey()
+	links = lines.map(lambda ids: parseNeighborsWiki(ids)).filter(lambda x: x).distinct().groupByKey().partitionBy(partitions)
+	#links = links_basic.partitionBy(new HashPartitioner(8))
 
 	# Loads all IDs with other ID(s) link to from input file and initialize ranks of them to one.
-	ranks = links.map(lambda id_neighbors: (id_neighbors[0], 1.0))
+	ranks = links.map(lambda id_neighbors: (id_neighbors[0], 1.0)).partitionBy(partitions)
 
 	print('ranks data type: ' + str(type(ranks)))
 
@@ -112,13 +107,8 @@ if __name__ == "__main__":
 		contribs = links.join(ranks).flatMap( lambda id_ids_rank: computeContribs(id_ids_rank[1][0], id_ids_rank[1][1]))
 
 		# Re-calculates nodeID ranks based on neighbor contributions.
-		ranks = contribs.reduceByKey(add).mapValues(lambda rank: rank * 0.85 + 0.15)
+		ranks = contribs.reduceByKey(add).mapValues(lambda rank: rank * 0.85 + 0.15).partitionBy(partitions)
 
 
 	# Store data 
-	ranks.coalesce(1,True).saveAsTextFile(output_path);
-
-	mean = ranks.map(lambda x: x[1]).mean()
-	print('AVG ranking: ' + str(mean))  					# a dense vector containing the mean value for each column
-
-	spark.stop()
+	ranks.saveAsTextFile(output_path);

@@ -11,6 +11,7 @@ import sys
 The following program takes as input:
 	- Absolute path to csv input file in HDFS
 	- Absolute path to csv output file in HDFS 
+	- Public IP address of MAster node 
 
 And do the following:
 	- Set up a Spark Session using the appropriate config values
@@ -18,7 +19,7 @@ And do the following:
 	- Sort the data using the "cca2" and "timestamp" columns
 	- Store back the data into HDFS
 
-OBS: The appropriate IP address of the spark master has to be provided!
+OBS: The appropriate public IP address of the spark master has to be provided!
 	 Also, it is supposed that the HDFS Namenode has private network IP = 10.10.1.1 
 
 EX: spark../bin/spark-submit.sh load_csv_test.py /data/export.csv /data/export_sorted.csv
@@ -26,8 +27,8 @@ EX: spark../bin/spark-submit.sh load_csv_test.py /data/export.csv /data/export_s
 
 if __name__ == "__main__":
 
-	if len(sys.argv) != 3:
-		print("Usage: load_csv_test.py <inputFile> <outputFile>")
+	if len(sys.argv) != 4:
+		print("Usage: load_csv_test.py <inputFile> <outputFile> <master_IP>")
 		sys.exit(-1)
 
 
@@ -37,8 +38,10 @@ if __name__ == "__main__":
 	# Executor cores  				= 10
 	# Number of cpus per task  		= 1 
 
+	master_IP = sys.argv[3]
+
 	spark = SparkSession.builder\
-	.master("spark://128.110.153.141:7077")\
+	.master("spark://"+master_IP+":7077")\
 	.appName("homework 1 part 1")\
 	.config("spark.submit.deployMode", "cluster")\
 	.config("spark.driver.memory", "32g")\
