@@ -68,10 +68,12 @@ if __name__ == "__main__":
 	# Number of cpus per task  		= 1 
 
 	masterIP = sys.argv[4]
+	iterations = int (sys.argv[3])
+	partitions = int (sys.argv[5])
 
 	spark = SparkSession.builder\
 	.master("spark://"+ masterIP +":7077")\
-	.appName("homework 1 part 2 - wiki partitions")\
+	.appName("homework 1 part 2 - wiki with " + str(partitions) + " partitions")\
 	.config("spark.submit.deployMode", "cluster")\
 	.config("spark.eventLog.enabled","true") \
 	.config("spark.driver.memory", "32g")\
@@ -86,8 +88,6 @@ if __name__ == "__main__":
 
 	output_path = "hdfs://10.10.1.1:9000" + sys.argv[2]
 
-	iterations = int (sys.argv[3])
-	partitions = int (sys.argv[5])
 
 	# Loads in input file. It should be in format of:
 	#     nodeID         neighbor nodeID

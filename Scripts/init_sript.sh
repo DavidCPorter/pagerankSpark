@@ -21,6 +21,9 @@
 USER="$(whoami)"
 ABS_PATH="$(pwd)"
 
+cd "/users/$USER/"
+
+
 # Update the system and download java
 
 echo 'Updating the system and downloading java-jdk...'

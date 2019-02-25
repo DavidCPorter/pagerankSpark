@@ -21,9 +21,10 @@ hdfs dfs -put ../Data/web-BerkStan.txt $INPUT_HDFS
 
 hdfs dfs -rm -r $OUTPUT_HDFS
 
+echo 'Cleaning the cache of the nodes...'
+parallel-ssh -i -h ../../slaves -P "sudo sh -c \"sync; echo 3 > /proc/sys/vm/drop_caches\""
 
 echo 'Starting the application...'
-
 ../../spark-2.2.0-bin-hadoop2.7/bin/spark-submit ../page_rank.py $INPUT_HDFS $OUTPUT_HDFS $ITERATIONS $MASTER_IP
 
 echo 'Execution completed!'
