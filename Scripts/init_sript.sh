@@ -21,8 +21,13 @@
 USER="$(whoami)"
 ABS_PATH="$(pwd)"
 
-cd "/users/$USER/"
+echo 'Testing the parallel-ssh connection...'
+if [ ! -f ./slaves ]; then
+	echo 'Create a file named slaves with the list of the host-name present in the cluster'
+	exit
+fi
 
+parallel-ssh -i -h slaves -O StrictHostKeyChecking=no hostname
 
 # Update the system and download java
 
@@ -33,11 +38,11 @@ parallel-ssh -h ./slaves -P "yes | sudo apt-get install openjdk-8-jdk"
 
 
 echo 'Downloading hadoop...'
-
-# Download hadoop on all machines and unzip it
-parallel-ssh -h ./slaves -P wget http://apache.mirrors.hoobly.com/hadoop/common/hadoop-2.7.6/hadoop-2.7.6.tar.gz
+if [ ! -f ./hadoop-2.7.6.tar.gz ]; then
+	# Download hadoop on all machines and unzip it
+	parallel-ssh -h ./slaves -P wget http://apache.mirrors.hoobly.com/hadoop/common/hadoop-2.7.6/hadoop-2.7.6.tar.gz
+fi
 parallel-ssh -h ./slaves -P tar zvxf hadoop-2.7.6.tar.gz
-
 
 echo 'Setting up the core-site.xml file...'
 
@@ -116,16 +121,16 @@ scp $USER@leader:$ABS_PATH'/'$SLAVES_PATH $USER@follower-3:$ABS_PATH'/'$SLAVES_P
 
 echo 'Installation of HDFS done, now starting namenode and datanode'
 
-export PATH="/users/claudio/hadoop-2.7.6/bin/:/users/claudio/hadoop-2.7.6/sbin/":$PATH
+export PATH="/users/$USER/hadoop-2.7.6/bin/:/users/$USER/hadoop-2.7.6/sbin/":$PATH
 
 hdfs namenode -format
 yes | start-dfs.sh
 
-hdfs dfs -mkdir /data/
-
 echo 'Downloading spark...'
 
-parallel-ssh -h ./slaves -P wget https://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.7.tgz
+if [ ! -f ./spark-2.2.0-bin-hadoop2.7.tgz ]; then
+	parallel-ssh -h ./slaves -P wget https://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.7.tgz
+fi
 parallel-ssh -h ./slaves -P tar zvxf spark-2.2.0-bin-hadoop2.7.tgz
 
 
@@ -140,8 +145,6 @@ scp $USER@leader:$ABS_PATH'/'$SLAVES_PATH_SPARK $USER@follower-2:$ABS_PATH'/'$SL
 scp $USER@leader:$ABS_PATH'/'$SLAVES_PATH_SPARK $USER@follower-3:$ABS_PATH'/'$SLAVES_PATH_SPARK
 
 echo 'Starting spark...'
-
-mkdir /tmp/spark-events
 
 spark-2.2.0-bin-hadoop2.7/sbin/start-all.sh
 
