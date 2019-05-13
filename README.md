@@ -1,6 +1,8 @@
 # CS 494 - Cloud Data Center Systems
 
 ## Homework 1
+### HW1 Report Link:
+[__HW1 Project Report__](cs494_hw1_report.pdf)
 
 ### Setup Script
 
